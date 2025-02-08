@@ -29,3 +29,18 @@ class DataHandler:
                 else:
                     total_time[project_name] = duration
         return total_time
+
+    # The get_time_data method provides a way to access the time data stored in the CSV file.
+    # It provides the data for data visualization and analysis.
+    def get_time_data(self):
+        data = {}
+        with open(self.file_path, mode='r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                project_name = row[1]
+                duration= float(row[4])
+                if project_name in data:
+                    data[project_name].append(duration)
+                else:
+                    data[project_name] = [duration]
+        return data
