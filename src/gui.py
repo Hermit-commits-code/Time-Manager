@@ -14,11 +14,18 @@ class TimeTrackerGUI:
         self.create_widgets()
 
     def create_widgets(self):
+        self.root.columnconfigure(0, weight=1)
+        self.root.columnconfigure(1, weight=1)
+        self.root.rowconfigure(0, weight=1)
+        self.root.rowconfigure(1, weight=1)
+        self.root.rowconfigure(2, weight=1)
+
         self.project_label = ttk.Label(self.root, text="Project:")
         self.project_label.grid(row=0, column=0, padx=10, pady=10)
 
-        self.project_entry = ttk.Entry(self.root)
-        self.project_entry.grid(row=0, column=1, padx=10, pady=10)
+        self.project_var = tk.StringVar()
+        self.project_dropdown = ttk.Combobox(self.root, textvariable=self.project_var, values=self.data_handler.projects)
+        self.project_dropdown.grid(row=0, column=1, padx=10, pady=10)
 
         self.start_button = ttk.Button(self.root, text="Start", command=self.start_tracking)
         self.start_button.grid(row=1, column=0, padx=10, pady=10)
