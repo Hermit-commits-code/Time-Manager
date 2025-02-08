@@ -22,6 +22,7 @@ class TimeTrackerGUI:
         self.root.rowconfigure(3, weight=1)
         self.root.rowconfigure(4, weight=1)
         self.root.rowconfigure(5, weight=1)
+        self.root.rowconfigure(6, weight=1)
 
         # Create a label for the project selection dropdown.
         self.project_label = ttk.Label(self.root, text="Project:")
@@ -62,7 +63,15 @@ class TimeTrackerGUI:
         self.log_listbox = tk.Listbox(self.root)
         self.log_listbox.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
 
-# Add the start_tracking and stop_tracking methods to the TimeTrackerGUI class.
+        # Create a button to generate the report
+        self.report_button = ttk.Button(self.root, text="Generate Report", command=self.generate_report)
+        self.report_button.grid(row=6, column=0, columnspan=2, padx=10, pady=10, sticky="NSEW")
+
+        # Create a text widget to display the report
+        self.report_text = tk.Text(self.root, height=10)
+        self.report_text.grid(row=7, column=0, columnspan=2, padx=10, pady=10, sticky="NSEW")
+
+    # Add the start_tracking and stop_tracking methods to the TimeTrackerGUI class.
     def start_tracking(self):
         self.start_time = datetime.now()
         self.log_listbox.insert(tk.END, f"Started tracking at {self.start_time.strftime('%H:%M')}")
@@ -73,6 +82,10 @@ class TimeTrackerGUI:
         self.data_handler.log_time(project_name, self.start_time, self.end_time)
         self.log_listbox.insert(tk.END, f"Stopped tracking at {self.end_time.strftime('%H:%M')}")
     
+    # The log_manual_entry method is called when the "Log Time" button is pressed.
+    # It retrieves the project name, start time, and end time from the entry widgets,
+    # parses the start and end times, logs the entry using the data_handler,
+    # and logs a message in the listbox. If the time format is invalid, it displays an error message.
     def log_manual_entry(self):
         project_name = self.project_var.get()
         start_time_str = self.start_time_entry.get()
@@ -84,3 +97,13 @@ class TimeTrackerGUI:
             self.log_listbox.insert(tk.END, f"Logged manual entry for {project_name} from {start_time_str} to {end_time_str}")
         except ValueError:
             self.log_listbox.insert(tk.END, "Invalid time format. Please use HH:MM format.")
+
+    # The generate_report method is called when the "Generate Report" button is pressed.
+    # It calculates the total time spent on each project and displays the report in the text widget.
+    def generate_report(self):
+       total_time = self.data_handler.calculate_total_time()
+       report = "Total Time Spent on Projects:\n"
+       for project, duration in total_time.items():
+            report += f"{project}: {duration:.2f} minutes\n"
+       self.report_text.delete(1.0, tk.END)
+       self.report_text.insert(tk.END, report)
