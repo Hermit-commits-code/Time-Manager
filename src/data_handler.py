@@ -15,3 +15,17 @@ class DataHandler:
             writer = csv.writer(file)
             # Write the new time entry to the CSV file
             writer.writerow([datetime.now().date(), project_name, start_time.strftime("%H:%M"), end_time.strftime("%H:%M"), duration])
+    
+    # The calculate_total_time method calculates the total time spent on a project.
+    def calculate_total_time(self):
+        total_time = {}
+        with open(self.file_path, mode='r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                project_name = row[1]
+                duration = float(row[4])
+                if project_name in total_time:
+                    total_time[project_name] += duration
+                else:
+                    total_time[project_name] = duration
+        return total_time
