@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 from datetime import datetime
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 # Create a new class called TimeTrackerGUI
 class TimeTrackerGUI:
@@ -71,6 +73,10 @@ class TimeTrackerGUI:
         self.report_text = tk.Text(self.root, height=10)
         self.report_text.grid(row=7, column=0, columnspan=2, padx=10, pady=10, sticky="NSEW")
 
+        # Create button to generate the chart
+        self.chart_button = ttk.Button(self.root, text="Generate Chart", command=self.generate_chart)
+        self.chart_button.grid(row=8, column=0, columnspan=2, padx=10, pady=10, sticky="NSEW")
+
     # Add the start_tracking and stop_tracking methods to the TimeTrackerGUI class.
     def start_tracking(self):
         self.start_time = datetime.now()
@@ -107,3 +113,19 @@ class TimeTrackerGUI:
             report += f"{project}: {duration:.2f} minutes\n"
        self.report_text.delete(1.0, tk.END)
        self.report_text.insert(tk.END, report)
+
+    # The generate_chart method is called when the "Generate Chart" button is pressed.
+    # It generates a bar chart to visualize the time spent on each project.
+    def generate_chart(self):
+        data = self.data_handler.get_time_data()
+        projects = list(data.keys())
+        durations = [sum(times) for times in data.values()]
+
+        fig, ax = plt.subplots()
+        ax.bar(projects, durations)
+        ax.set_xlabel('Projects')
+        ax.set_ylabel('Total Time (minutes)')
+        ax.set_title('Total Time Spent on Projects')
+
+        chart = FigureCanvasTkAgg(fig, self.root)
+        chart.get_tk_widget().grid(row=9, column=0, columnspan=2, padx=10, pady=10, sticky="NSEW")
